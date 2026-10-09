@@ -2,12 +2,12 @@
 { pkgs ? import <nixpkgs> {} }:
 pkgs.mkShell {
   packages = with pkgs; [
-    gcc gnumake cmake ninja pkg-config python3 binutils
+    gcc gnumake cmake ninja pkg-config python3 binutils git
     vulkan-headers vulkan-loader sdl3
     # GPU library (gpu/): shadPS4 video core dependencies
     ffmpeg-headless boost fmt magic-enum robin-map xxhash vulkan-memory-allocator glslang spirv-cross xbyak zydis spirv-headers miniz libx11 libxcb xorgproto wayland
-    # Online stack (this fork): Protobuf / JSON / TLS / compression
-    protobuf nlohmann_json openssl zlib
+    # Online stack (this fork): Protobuf / JSON / TLS / compression + UPnP / Discord
+    protobuf nlohmann_json openssl zlib miniupnpc discord-rpc
     # SDL3 / X11 pkg-config dependencies
     alsa-lib libxau
   ];
