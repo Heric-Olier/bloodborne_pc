@@ -1,0 +1,53 @@
+name: build-linux
+
+on:
+  push:
+    branches: [ci-linux-build]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - name: Liberar espacio del runner
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+
+      - name: Checkout (con submódulos)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Instalar Nix
+        uses: cachix/install-nix-action@v27
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Compilar (entorno del desarrollador vía nix-shell)
+        run: |
+          set -o pipefail
+          nix-shell shell.nix --run 'BB_LTO=OFF bash build.sh' 2>&1 | tail -80
+
+      - name: Recoger binarios
+        run: |
+          mkdir -p artifacts/gpu
+          cp -v out/bb-probe artifacts/ || true
+          cp -v out/bb-gpu-capabilities artifacts/ || true
+          find out -name 'libbbgpu.so*' -exec cp -v {} artifacts/gpu/ \; || true
+          echo "--- contenido:"
+          ls -laR artifacts/ | head -40
+
+      - name: Subir artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: bbport-linux-bin
+          path: artifacts/
+          if-no-files-found: error
