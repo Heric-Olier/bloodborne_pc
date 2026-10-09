@@ -6,5 +6,9 @@ pkgs.mkShell {
     vulkan-headers vulkan-loader sdl3
     # GPU library (gpu/): shadPS4 video core dependencies
     ffmpeg-headless boost fmt magic-enum robin-map xxhash vulkan-memory-allocator glslang spirv-cross xbyak zydis spirv-headers miniz libx11 libxcb xorgproto wayland
+    # Online stack (this fork): Protobuf / JSON / TLS / compression
+    protobuf nlohmann_json openssl zlib
+    # SDL3 / X11 pkg-config dependencies
+    alsa-lib libxau
   ];
 }
